@@ -1,8 +1,8 @@
-class Main extends Graphics {
+class Main {
 
     public static void main(String args[]) {
-        Game g=new Game();
-        g.startGame();
+        Game game=new Game(new Dice(),new ScoreBoard());
+        game.startGame();
 
     }
 

@@ -1,14 +1,13 @@
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     String playerName;
     Dice dice;
     ScoreBoard scoreBoard;
 
-    public Game() {
-        dice=new Dice();
-        scoreBoard=new ScoreBoard();
+    public Game(Dice diceService,ScoreBoard scoreBoardService) {
+        dice=diceService;
+        scoreBoard=scoreBoardService;
         this.playerName=null;
     }
 
@@ -20,31 +19,53 @@ public class Game {
     }
     public void startGame(){
         showWelcomeWindow();
+
         while(!isGameEnded()){
             clearConsole();
             dice.clearDices();
+            scoreBoard.resetCategoriesListScore();
             dice.rollDices();
             int rolltimes=1;
             dice.printDices();
             scoreBoard.calculateScore(dice.getDiceList());
-            scoreBoard.PrintScoreBoard();
+            scoreBoard.printScoreBoard();
             if(askForReroll()){ //ask player which dices he/she wants to reroll
-                while(rolltimes<=3){
-                    Scanner scanner=new Scanner(System.in);
-
+                while(rolltimes<3){
                     clearConsole();
-                    dice.rerollDices();
+                    dice.printDices();
+                    scoreBoard.printScoreBoard();
+                    scoreBoard.resetCategoriesListScore();
+                    System.out.println("Rolls left " + (3-rolltimes));
+                    Scanner scanner=new Scanner(System.in);
+                    List<Integer> numbers=new ArrayList<Integer>();
+                    System.out.println("Enter how much dices do you want to reroll: ");
+                    int size=scanner.nextInt();
+                    System.out.println("Enter indexes from 1 to 5 which dices to reroll");
+                    for(int i=0;i<size;i++){
+                        numbers.add(scanner.nextInt());
+                    }
+                    dice.rerollDices(numbers);
+                    clearConsole();
+                    dice.printDices();
+                    scoreBoard.calculateScore(dice.getDiceList());
+                    scoreBoard.printScoreBoard();
+                    rolltimes++;
+                    if(rolltimes==3||!askForReroll()){
+                        askWhichCategoryUpdate();
+                        break;
+                    }
+
                 }
             }
             else{ //if player don't wants to reroll dices ask him where to update score
                 askWhichCategoryUpdate();
             }
         }
+            showFinishGameMessage();
     }
-    private boolean isGameEnded(){
+    public boolean isGameEnded(){ //set to public for testing purposes
         HashMap<String,Integer> scores=scoreBoard.getSelectedCategoriesList();
-        if(scores.containsValue(0)) return false;
-        else return true;
+        return !scores.containsValue(0);
     }
     private final void clearConsole(){
         for(int clear = 0; clear < 100; clear++) {
@@ -63,14 +84,26 @@ public class Game {
             case "no":
                 return false;
             default:
-                throw new Error("This input is not available");
+                return false;
 
         }
     }
     private void askWhichCategoryUpdate(){
         Scanner scanner=new Scanner(System.in);
         System.out.print("Enter in which category update score: ");
-        scoreBoard.UpdateScore(scanner.nextLine());
+        scoreBoard.updateScore(scanner.nextLine());
+
+    }
+    private void showFinishGameMessage(){
+        clearConsole();
+        System.out.println("Good game " + playerName + " your score is: ");
+        for(Map.Entry<String,Integer> entry: scoreBoard.getSelectedCategoriesList().entrySet()){
+            System.out.println(entry.getKey() + "   " + entry.getValue());
+        }
+    }
+
+    public ScoreBoard getScoreBoard() { //this method is for testing purposes only
+        return scoreBoard;
     }
 }
 

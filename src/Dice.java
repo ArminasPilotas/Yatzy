@@ -1,13 +1,12 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class Dice implements DicePrinter {
+public class Dice {
     private ArrayList<Integer> diceList;
-    private ArrayList<Boolean> selectedDicesList;
 
     public Dice(){
         diceList=new ArrayList<Integer>();
-        selectedDicesList=new ArrayList<Boolean>();
     }
     public void rollDices(){ //rolls all dices
         for(int i=0;i<5;i++){
@@ -15,13 +14,17 @@ public class Dice implements DicePrinter {
             diceList.add(rand.nextInt(6)+1);
         }
     }
-    public void rerollDices(){
-       for(int i=0;i<5;i++){
-           if(selectedDicesList.get(i)){ //checks if need reroll
-               Random rand=new Random();
-               diceList.set(i,rand.nextInt(6)+1);
-           }
-       }
+    public void rerollDices(List<Integer> diceIndexes){
+        if(diceIndexes.size()>5||diceIndexes.size()==0){
+            throw new Error("Invalid Bounds");
+        }
+        else{
+            for(int i=0;i<diceIndexes.size();i++){
+                Random rand=new Random();
+                diceList.set(diceIndexes.get(i)-1,rand.nextInt(6)+1);
+            }
+        }
+
     }
     public void clearDices(){
         diceList.clear();
@@ -30,11 +33,7 @@ public class Dice implements DicePrinter {
         return diceList;
     }
 
-    public ArrayList<Boolean> getSelectedDicesList() {
-        return selectedDicesList;
-    }
 
-    @Override
     public void printDices() {
         System.out.println("Dices");
         for(int dice:diceList){

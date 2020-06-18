@@ -38,21 +38,19 @@ public class ScoreBoard {
         categoriesScoreList.put("One Pair",biggestPair);
 
     }
-    public void UpdateScore(String combination) {
-        if (selectedCategoriesList.containsKey(combination)) {
-            selectedCategoriesList.put(combination, selectedCategoriesList.get(combination) + categoriesScoreList.get(combination));
-            ResetCategoriesListScore();
-        }
-        else {
+    public void updateScore(String combination) {
+        if(!selectedCategoriesList.containsKey(combination)){
             throw new Error("Can't find combination");
         }
+        selectedCategoriesList.put(combination, selectedCategoriesList.get(combination) + categoriesScoreList.get(combination));
+        resetCategoriesListScore();
     }
-    private void ResetCategoriesListScore(){
+    public void resetCategoriesListScore(){
         for(Map.Entry<String,Integer> entry: categoriesScoreList.entrySet()){
             entry.setValue(0);
         }
     }
-    public void PrintScoreBoard() {
+    public void printScoreBoard() {
         System.out.println("Yours score board" + " Current score board");
         for(Map.Entry<String,Integer> entry: selectedCategoriesList.entrySet()){
             String key=entry.getKey();
@@ -62,5 +60,9 @@ public class ScoreBoard {
     }
     public HashMap<String, Integer> getSelectedCategoriesList() {
         return selectedCategoriesList;
+    }
+
+    public HashMap<String, Integer> getCategoriesScoreList() { //for testing purposes
+        return categoriesScoreList;
     }
 }
