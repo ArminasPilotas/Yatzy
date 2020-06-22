@@ -1,9 +1,11 @@
 class Main {
 
     public static void main(String args[]) {
-        Game game=new Game(new Dice(),new ScoreBoard());
-        game.startGame();
-
+        Sudoku sudoku=new Sudoku();
+        System.out.println(sudoku.validSolution());
+        Fibonacci fibonacci=new Fibonacci();
+        System.out.println(fibonacci.sumOfFibonacci());
+        //sum equals 4613732
     }
 
 }
